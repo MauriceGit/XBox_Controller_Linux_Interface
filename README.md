@@ -1,4 +1,4 @@
-# Linux interfact for an XBox Controller
+# Linux interface for an XBox Controller
 
 This is a linux interface, to integrate the Xbox-Controller directly into your favorite project.
 Not all buttons or axes are included. If you require different mappings or axes, please see the linux
