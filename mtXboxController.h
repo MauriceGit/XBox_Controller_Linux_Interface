@@ -24,12 +24,13 @@
 
 #define MT_XBOX_NORMALISATION 500000.0
 
-MTVec3D mtGetJoyCameraPosition ();
+MTVec3D mtGetJoyPosition ();
 MTVec3D mtGetJoyUp();
 MTVec3D mtGetJoyCenter();
 
-void mtCalcJoyCameraMovement(double interval);
+void mtCalcJoyMovement(double interval);
 
 int mtInitJoyCamera (char* name);
+int mtFinishJoyControl();
 
 #endif

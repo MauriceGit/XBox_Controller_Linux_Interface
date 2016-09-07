@@ -12,18 +12,11 @@
 
 MTVec3D G_JoyUpVector;
 MTVec3D G_JoyViewVector;
-MTVec3D G_JoyCameraTranslation;
-MTVec3D G_JoyCameraPosition;
+MTVec3D G_JoyTranslation;
+MTVec3D G_JoyPosition;
 
-MTVec3D mtGetJoyCameraPosition () {
-    return G_JoyCameraPosition;
-}
-
-/**
- * Just for convenience.
- */
 MTVec3D mtGetJoyPosition () {
-    return mtGetJoyCameraPosition();
+    return G_JoyPosition;
 }
 
 MTVec3D mtGetJoyUp() {
@@ -31,13 +24,13 @@ MTVec3D mtGetJoyUp() {
 }
 
 MTVec3D mtGetJoyCenter() {
-    return mtAddVectorVector(G_JoyViewVector, G_JoyCameraPosition);
+    return mtAddVectorVector(G_JoyViewVector, G_JoyPosition);
 }
 
 /**
  * Calculates all relevant joystick/gamepad stuff and rotates, moves the camera accordingly.
  */
-void mtCalcJoyCameraMovement (double interval)
+void mtCalcJoyMovement (double interval)
 {
 
     handleHMDEvent();
@@ -56,21 +49,21 @@ void mtCalcJoyCameraMovement (double interval)
 
     double forwardTranslation = -getTranslationAxisValue(4) / MT_XBOX_NORMALISATION;
     MTVec3D forwardVec = mtNormVector3D({.x=G_JoyViewVector.x, .y=0, .z=G_JoyViewVector.z});
-    G_JoyCameraTranslation = mtAddVectorVector(G_JoyCameraTranslation, mtMultiplyVectorScalar(forwardVec, forwardTranslation));
+    G_JoyTranslation = mtAddVectorVector(G_JoyTranslation, mtMultiplyVectorScalar(forwardVec, forwardTranslation));
 
     double sideTranslation = getTranslationAxisValue(3) / MT_XBOX_NORMALISATION;
     MTVec3D sideVec = mtNormVector3D({.x=sideDirection.x, .y=0, .z=sideDirection.z});
-    G_JoyCameraTranslation = mtAddVectorVector(G_JoyCameraTranslation, mtMultiplyVectorScalar(sideVec, sideTranslation));
+    G_JoyTranslation = mtAddVectorVector(G_JoyTranslation, mtMultiplyVectorScalar(sideVec, sideTranslation));
 
     MTVec3D upDirection = {.x=0, .y=1, .z=0};
     double upTranslation = (getTranslationAxisValue(2) + 32768) / MT_XBOX_NORMALISATION;
-    G_JoyCameraTranslation = mtAddVectorVector(G_JoyCameraTranslation, mtMultiplyVectorScalar(upDirection, upTranslation));
+    G_JoyTranslation = mtAddVectorVector(G_JoyTranslation, mtMultiplyVectorScalar(upDirection, upTranslation));
 
     MTVec3D downDirection = {.x=0, .y=-1, .z=0};
     double downTranslation = (getTranslationAxisValue(5) + 32768) / MT_XBOX_NORMALISATION;
-    G_JoyCameraTranslation = mtAddVectorVector(G_JoyCameraTranslation, mtMultiplyVectorScalar(downDirection, downTranslation));
+    G_JoyTranslation = mtAddVectorVector(G_JoyTranslation, mtMultiplyVectorScalar(downDirection, downTranslation));
 
-    G_JoyCameraPosition = G_JoyCameraTranslation;
+    G_JoyPosition = G_JoyTranslation;
 
     G_JoyViewVector = mtNormVector3D(G_JoyViewVector);
 
@@ -85,8 +78,8 @@ int mtInitJoyCamera (char* name)
     G_JoyViewVector = {.x=-MT_CAMERA_X, .y=-MT_CAMERA_Y, .z=-MT_CAMERA_Z};
     G_JoyViewVector = mtNormVector3D(G_JoyViewVector);
 
-    G_JoyCameraTranslation = {.x=0, .y=0, .z=0};
-    G_JoyCameraPosition = {.x=MT_CAMERA_X, .y=MT_CAMERA_Y, .z=MT_CAMERA_Z};
+    G_JoyTranslation = {.x=0, .y=0, .z=0};
+    G_JoyPosition = {.x=MT_CAMERA_X, .y=MT_CAMERA_Y, .z=MT_CAMERA_Z};
 
     if (!initializeHMD(name)) {
         printf("ERROR: hmd could not be initialized.\n");
