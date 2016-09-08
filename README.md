@@ -41,7 +41,7 @@ The following example uses the Controller to move the camera in an OpenGL contex
 ```c
 // This is done right at the start of your program, before entering the main loop.
 char* jsSource = "/dev/input/js0";
-if (!mtInitJoyCamera(jsSource)) {
+if (!mtInitJoyControl(jsSource)) {
     // Error. Initialisation failed.
 }
 
