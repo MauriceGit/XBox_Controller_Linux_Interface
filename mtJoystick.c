@@ -32,7 +32,7 @@
 #include <linux/joystick.h>
 
 /* eigene header einbinden */
-#include "joystick.h"
+#include "mtJoystick.h"
 
 
 /* Dynamisches Array an Devices mit geöffneten Verbindungen. */

@@ -1,4 +1,4 @@
-# Linux interface for an XBox Controller
+# Linux Interface for an XBox Controller
 
 This is a linux interface, to integrate the Xbox-Controller directly into your favorite project.
 Not all buttons or axes are included. If you require different mappings or axes, please see the linux
@@ -26,6 +26,7 @@ More documentation about these functions are found above the apropriate function
 Function | Description |
 --- | ---
 `int mtInitJoyCamera(char* name)` | This function MUST be called before any other. It initialises the usb stream connection.
+`int mtFinishJoyControl()` | This function should be called after any interaction with the Controller is finished.
 `void mtCalcJoyCameraMovement(double interval)` | This function should be called in very short intervals, top allow a very smooth joystick handling.
 `MTVec3D mtGetJoyPosition()` | The current position is retreived (of the camera or object, controlled via the Controller).
 `MTVec3D mtGetJoyUp()` | The current up-vector is retreived (of the camera or object, controlled via the Controller).
@@ -67,5 +68,20 @@ gluLookAt (cam.x,    cam.y,    cam.z,
 // Don't forget, to nicely kill the controller ;)
 mtFinishJoyControl();
 ```
+
+# Controller Assignment
+
+All code is tested with the XBox One controller (see following image).
+
+![XBox Controller](https://github.com/MauriceGit/XBox_Controller_Linux_Interface/blob/master/Images/controller.png "XBox controller")
+
+The following axes are assigned:
+
+Axis | Assignment
+ --- | ---
+![LT Axis](https://github.com/MauriceGit/XBox_Controller_Linux_Interface/blob/master/Images/XboxOne_LT.png "LT Axis") | Increases the height of the object/camera along the Y axis.
+![RT Axis](https://github.com/MauriceGit/XBox_Controller_Linux_Interface/blob/master/Images/XboxOne_RT.png "RT Axis") | Decreases the height of the object/camera along the Y axis.
+![Left Stick](https://github.com/MauriceGit/XBox_Controller_Linux_Interface/blob/master/Images/XboxOne_Left_Stick.png "Left Stick") | Controls the Pitch and Yaw axis. (Front/Back: Pitch, Left/Right: Yaw).
+![Right Stick](https://github.com/MauriceGit/XBox_Controller_Linux_Interface/blob/master/Images/XboxOne_Right_Stick.png "Right Stick") | Moves the object/camera on the X/Z plane relative to the current position and orientation. Front/Back/Left/Right accordingly.
 
 

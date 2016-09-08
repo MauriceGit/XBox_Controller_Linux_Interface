@@ -3,7 +3,7 @@
 /**
  * Implementation of a Camera controlled by an X-Box controller (And possibly other joysticks).
  *
- * All operations are prefixed with 'mt' to avoid name clashes and get a
+ * All operations are prefixed with 'mt' to avoid name clashes and get an
  * attempt for a unique prefix.
  *
  * This module is tested exclusively for an X-Box controller and can be used out-of-the-box.
@@ -30,7 +30,7 @@ MTVec3D mtGetJoyCenter();
 
 void mtCalcJoyMovement(double interval);
 
-int mtInitJoyCamera (char* name);
+int mtInitJoyControl (char* name);
 int mtFinishJoyControl();
 
 #endif
