@@ -41,8 +41,8 @@ Changes might be necessary depending on your application and size of your virtua
 
 Name | Default Value | Description
  --- | --- | ---
-MT_XBOX_TRANS_NORMALISATION | 500000.0 | The smaller this value, the faster the translation will get. So moving up/down/left/right/front/back are affected.
-MT_XBOX_TURN_NORMALISATION  | 2000.0   | The smaller this value, the faster Pitch and Yaw will be. Left stick is affected.
+`MT_XBOX_TRANS_NORMALISATION` | 500000.0 | The smaller this value, the faster the translation will get. So moving up/down/left/right/front/back are affected.
+`MT_XBOX_TURN_NORMALISATION`  | 2000.0   | The smaller this value, the faster Pitch and Yaw will be. Left stick is affected.
 
 
 # Usage
