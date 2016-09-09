@@ -44,6 +44,15 @@ Name | Default Value | Description
 `MT_XBOX_TRANS_NORMALISATION` | 500000.0 | The smaller this value, the faster the translation will get. So moving up/down/left/right/front/back are affected.
 `MT_XBOX_TURN_NORMALISATION`  | 2000.0   | The smaller this value, the faster Pitch and Yaw will be. Left stick is affected.
 
+# What about the Buttons?
+
+You might have noticed that we ignored any buttons in your Controller and the `mtXboxController` does in fact not give you any interface
+for buttons. Reason for that is, that this controller interface acts as an abstraction level for the transformation of axis movements
+to 3D orientation calculation, that internally uses Quaternions.
+
+Buttons don't need fancy calculations and abstractions around them. So if you like to implement actions for your Xbox Controller buttons,
+just include the `mtJoystick.h` and call the appropriate function directly (`int getButtonValue(int buttonNumber, short * value)`).
+
 
 # Usage
 
