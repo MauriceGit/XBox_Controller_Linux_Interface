@@ -32,6 +32,19 @@ Function | Description |
 `MTVec3D mtGetJoyUp()` | The current up-vector is retreived (of the camera or object, controlled via the Controller).
 `MTVec3D mtGetJoyCenter()` | The current center point is retreived (of the camera or object, controlled via the Controller).
 
+# Calibration
+
+There are two constants, to change the sensitivity of the joystick input. They are found in the `mtXboxController.h` and can be
+changed at will. Please ensure, that these values are of floating point.
+
+Changes might be necessary depending on your application and size of your virtual environment.
+
+Name | Default Value | Description
+ --- | --- | ---
+MT_XBOX_TRANS_NORMALISATION | 500000.0 | The smaller this value, the faster the translation will get. So moving up/down/left/right/front/back are affected.
+MT_XBOX_TURN_NORMALISATION  | 2000.0   | The smaller this value, the faster Pitch and Yaw will be. Left stick is affected.
+
+
 # Usage
 
 This library can be used to control a camera or object in a 3D environment.
@@ -50,7 +63,7 @@ if (!mtInitJoyControl(jsSource)) {
 // In GLUT or GLFW, there is a timer, allowing us to get the time interval between
 // two frames. We need this interval, to update the camera position via the Controller
 float interval = ...
-mtCalcJoyMovement(double interval);
+mtCalcJoyMovement(interval);
 
 ...
 

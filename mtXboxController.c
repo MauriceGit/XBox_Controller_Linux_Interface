@@ -52,7 +52,7 @@ float posToAngle(short pos, double factor) {
         pos = 0;
     }
 
-    float value = log(abs(pos) <= 1 && abs(pos) >= 0 ? 1 : abs(pos)*factor) / 2000.0;
+    float value = log(abs(pos) <= 1 && abs(pos) >= 0 ? 1 : abs(pos)*factor) / MT_XBOX_TURN_NORMALISATION;
     if (pos <= 0) {
         value *= -1;
     }
@@ -107,24 +107,24 @@ void mtCalcJoyMovement (double interval)
     maxAngle = maxAngle < 0 ? -1.0 : maxAngle;
     minAngle = minAngle > 0 ? 1.0 : minAngle;
 
-    MTQuaternion q = getQuaternion(sideDirection, {.x=0, .y=1, .z=0}, minAngle, maxAngle, interval);
+    MTQuaternion q = getQuaternion(sideDirection, mtToVector3D(0, 1, 0), minAngle, maxAngle, interval);
 
     G_JoyViewVector = mtRotatePointWithQuaternion(q, G_JoyViewVector);
 
-    double forwardTranslation = -getTranslationAxisValue(4) / MT_XBOX_NORMALISATION;
-    MTVec3D forwardVec = mtNormVector3D({.x=G_JoyViewVector.x, .y=0, .z=G_JoyViewVector.z});
+    double forwardTranslation = -getTranslationAxisValue(4) / MT_XBOX_TRANS_NORMALISATION;
+    MTVec3D forwardVec = mtNormVector3D(mtToVector3D(G_JoyViewVector.x, 0, G_JoyViewVector.z));
     G_JoyTranslation = mtAddVectorVector(G_JoyTranslation, mtMultiplyVectorScalar(forwardVec, forwardTranslation));
 
-    double sideTranslation = getTranslationAxisValue(3) / MT_XBOX_NORMALISATION;
-    MTVec3D sideVec = mtNormVector3D({.x=sideDirection.x, .y=0, .z=sideDirection.z});
+    double sideTranslation = getTranslationAxisValue(3) / MT_XBOX_TRANS_NORMALISATION;
+    MTVec3D sideVec = mtNormVector3D(mtToVector3D(sideDirection.x, 0, sideDirection.z));
     G_JoyTranslation = mtAddVectorVector(G_JoyTranslation, mtMultiplyVectorScalar(sideVec, sideTranslation));
 
-    MTVec3D upDirection = {.x=0, .y=1, .z=0};
-    double upTranslation = (getTranslationAxisValue(2) + 32768) / MT_XBOX_NORMALISATION;
+    MTVec3D upDirection = mtToVector3D(0, 1, 0);
+    double upTranslation = (getTranslationAxisValue(2) + 32768) / MT_XBOX_TRANS_NORMALISATION;
     G_JoyTranslation = mtAddVectorVector(G_JoyTranslation, mtMultiplyVectorScalar(upDirection, upTranslation));
 
-    MTVec3D downDirection = {.x=0, .y=-1, .z=0};
-    double downTranslation = (getTranslationAxisValue(5) + 32768) / MT_XBOX_NORMALISATION;
+    MTVec3D downDirection = mtToVector3D(0, -1, 0);
+    double downTranslation = (getTranslationAxisValue(5) + 32768) / MT_XBOX_TRANS_NORMALISATION;
     G_JoyTranslation = mtAddVectorVector(G_JoyTranslation, mtMultiplyVectorScalar(downDirection, downTranslation));
 
     G_JoyPosition = G_JoyTranslation;
@@ -138,12 +138,12 @@ void mtCalcJoyMovement (double interval)
  */
 int mtInitJoyControl (char* name)
 {
-    G_JoyUpVector = {.x=0, .y=1, .z=0};
-    G_JoyViewVector = {.x=-MT_CAMERA_X, .y=-MT_CAMERA_Y, .z=-MT_CAMERA_Z};
+    G_JoyUpVector = mtToVector3D(0, 1, 0);
+    G_JoyViewVector = mtToVector3D(-MT_CAMERA_X, -MT_CAMERA_Y, -MT_CAMERA_Z);
     G_JoyViewVector = mtNormVector3D(G_JoyViewVector);
 
-    G_JoyTranslation = {.x=0, .y=0, .z=0};
-    G_JoyPosition = {.x=MT_CAMERA_X, .y=MT_CAMERA_Y, .z=MT_CAMERA_Z};
+    G_JoyTranslation = mtToVector3D(0,0,0);
+    G_JoyPosition = mtToVector3D(MT_CAMERA_X, MT_CAMERA_Y, MT_CAMERA_Z);
 
     if  (!startDeviceConnection(name)) {
         printf("ERROR: joystick could not be initialized.\n");
