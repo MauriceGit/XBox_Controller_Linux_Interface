@@ -46,7 +46,7 @@ Name | Default Value | Description
 
 # What about the Buttons?
 
-You might have noticed that we ignored any buttons in your Controller and the `mtXboxController` does in fact not give you any interface
+You might have noticed that we ignored any buttons from your Controller and the `mtXboxController` does in fact not give you any interface
 for buttons. Reason for that is, that this controller interface acts as an abstraction level for the transformation of axis movements
 to 3D orientation calculation, that internally uses Quaternions.
 
