@@ -22,7 +22,8 @@
 #define MT_MAX_ANGLE       179.0
 #define MT_MIN_ANGLE       1.0
 
-#define MT_XBOX_NORMALISATION 500000.0
+#define MT_XBOX_TRANS_NORMALISATION 500000.0
+#define MT_XBOX_TURN_NORMALISATION 2000.0
 
 MTVec3D mtGetJoyPosition ();
 MTVec3D mtGetJoyUp();
