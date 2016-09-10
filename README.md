@@ -25,7 +25,7 @@ More documentation about these functions are found above the apropriate function
 
 Function | Description |
 --- | ---
-`int mtInitJoyCamera(char* name)` | This function MUST be called before any other. It initialises the usb stream connection.
+`int mtInitJoyControl(char* name)` | This function MUST be called before any other. It initialises the usb stream connection.
 `int mtFinishJoyControl()` | This function should be called after any interaction with the Controller is finished.
 `void mtCalcJoyCameraMovement(double interval)` | This function should be called in very short intervals, to allow a very smooth joystick handling. The parameter is the time since the last call to this method.
 `MTVec3D mtGetJoyPosition()` | The current position is retreived (of the camera or object, controlled via the Controller).
