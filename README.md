@@ -39,10 +39,12 @@ changed at will. Please ensure, that these values are of floating point.
 
 Changes might be necessary depending on your application and size of your virtual environment.
 
+
+
 Name | Default Value | Description
  --- | --- | ---
-`MT_XBOX_TRANS_NORMALISATION` | 500000.0 | The smaller this value, the faster the translation will get. Affected are: Right stick, LT Axis and RT Axis (See: [Controller Assignment](#controller-assignment))
-`MT_XBOX_TURN_NORMALISATION`  | 2000.0   | The smaller this value, the faster Pitch and Yaw will be. Left stick is affected.
+`MT_XBOX_TRANS_NORMALISATION` | 500000.0 | The smaller this value, the faster the translation will get. Affected are: Right stick, LT Axis and RT Axis (See: [Controller Assignment](#controller-assignment)).
+`MT_XBOX_TURN_NORMALISATION`  | 2000.0   | The smaller this value, the faster Pitch and Yaw will be. Left stick is affected (See: [Controller Assignment](#controller-assignment)).
 
 The following constants will affect the axis and give them an offset (if value > 0).
 The offset could be used, to for example ignore the negative axis values.
@@ -53,6 +55,8 @@ Name | Default Value | Assignment
 `MT_AXIS_3_OFFSET` | 0 | Left stick
 `MT_AXIS_4_OFFSET` | 0 | Right stick
 `MT_AXIS_5_OFFSET` | 32768 | RT Axis
+
+See also: [Controller Assignment](#controller-assignment).
 
 # What about the Buttons?
 
