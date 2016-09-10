@@ -101,7 +101,7 @@ gluLookAt (cam.x,    cam.y,    cam.z,
 mtFinishJoyControl();
 ```
 
-# Controller Assignment (#controller-assignment)
+[Controller Assignment](#controller-assignment)
 
 All code is tested with the XBox One controller (see following image).
 
