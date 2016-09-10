@@ -1,7 +1,7 @@
 # Linux Interface for an XBox One Controller
 
 This is a linux interface, to integrate the Xbox-Controller directly into your favorite project.
-Not all buttons or axes are included. If you require different mappings or axes, please see the linux
+If you require different mappings or axes, please see the linux
 programs: **jscal** and **jstest-gtk** to change the mapping on the controller.
 
 It is also recommended, to calibrate the controller before using it. This is also done with: **jscal** or **jstest-gtk**.
