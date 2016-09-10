@@ -38,7 +38,7 @@ JoystickDevice g_device;
 
 /**
  * Changes the correction coefficients to calibrate a Joystick.
- * This can also be done, using the Linxu programs: jstest-gtk or jscal
+ * This can also be done, using the Linux programs: jstest-gtk or jscal
  */
 int setCalibrationCoefficients(int a,int b,int c,int d,int t,int prec) {
     struct js_corr corr[8];
