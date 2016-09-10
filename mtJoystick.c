@@ -1,28 +1,27 @@
 /*
- * joystick.c
+ * mtJoystic.h
  *
- * Implementiert die Behandlung von Joysticks ab linux 2.2.x.
- * In dieser Implementierung sind maximal:
- * - 256 Achsen
+ * Implements Joystick control for Linux newer than 2.2.x.
+ * This implementation can handle a maxium of:
+ * - 256 axes
  * - 256 Buttons
- * auslesbar.
  *
- * Ermöglicht das Auslesen von:
- * - Namen des Device
- * - Anzahl der Achsen
- * - Anzahl der Buttons
- * - Status der Achsen (-32768/32767) (signed short)
- * - Status der Buttons (0/1)
+ * Allows to read the following attributes:
+ * - Device name
+ * - Axis count
+ * - Button count
+ * - Axis status (-32768/32767) (signed short)
+ * - Button status (0/1)
  *
- * Das Auslesen ist eventbasiert.
+ * Reading of those values is event based.
  *
- * Author: Mervyn McCreight, Maurice Tollmien
+ * Author: Maurice Tollmien, Mervyn McCreight
  *
- * zuletzt geändert: 4.4.2013
+ * Last change: 10.09.2016
  */
 
 
-/* benötigte system-header einbinden */
+/* System header */
 #include <stdlib.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -31,16 +30,15 @@
 #include <sys/ioctl.h>
 #include <linux/joystick.h>
 
-/* eigene header einbinden */
 #include "mtJoystick.h"
 
 
-/* Dynamisches Array an Devices mit geöffneten Verbindungen. */
+/* Array of open device streams! */
 JoystickDevice g_device;
 
 /**
- * Veraendert die Correction Koeffizienten, um
- * einen Joystick zu kalibrieren.
+ * Changes the correction coefficients to calibrate a Joystick.
+ * This can also be done, using the Linxu programs: jstest-gtk or jscal
  */
 int setCalibrationCoefficients(int a,int b,int c,int d,int t,int prec) {
     struct js_corr corr[8];
@@ -59,7 +57,7 @@ int setCalibrationCoefficients(int a,int b,int c,int d,int t,int prec) {
         printf("corr.type = %d, corr.prec = %d, corr.a = %d, corr.b = %d, corr.c = %d, corr.d = %d\n", corr[i].type, corr[i].prec, corr[i].coef[0], corr[i].coef[1], corr[i].coef[2], corr[i].coef[3]);
     }
 
-    /* correction setzen */
+    /* set correction */
     if (ioctl(g_device.fd, JSIOCSCORR, &corr)) {
         return 0;
     }
@@ -68,16 +66,12 @@ int setCalibrationCoefficients(int a,int b,int c,int d,int t,int prec) {
 }
 
 /**
- * Gibt den für die interne
- * Datenstruktur zur Speicherung
- * der Joystickdaten allokierten
- * Speicher wieder frei.
+ * Frees the allocated memory for any device data.
  *
- * @return 0 = Fehler / 1 = hat funktioniert.
+ * @return 0 on failure. Otherwise success.
  */
 static int freeDeviceMemory() {
 
-    /* dynamische Arrays zur Achsen/Tastenwertspeicherung freigeben. */
     free(g_device.axisValues);
     free(g_device.buttonValues);
 
@@ -85,16 +79,16 @@ static int freeDeviceMemory() {
 }
 
 /**
- * Öffnet den Joystick-Datenstrom zum Lesen.
- * @param devname der Pfad zum Device
+ * Opens the joystick device stream for reading.
+ * @param devname Path to device (Most common: /dev/input/js0)
  *
- * @return 0 = Fehler / 1 = hat funktioniert
+ * @return 0 on failure. Otherwise success.
  */
 static int openDeviceStream(const char * devname) {
     /*
-     * Öffnet das Device im Blocking-Mode.
-     * Ist kein Device angeschlossen, bzw. sendet das Device
-     * keine valide Antwort, wird "-1" als Fehlerwert zurückgegeben.
+     * Opens device in blocking mode.
+     * If the return value is invalid or no device is connected,
+     * -1 is returned as error value.
      */
     g_device.fd = open(devname, O_RDONLY);
 
@@ -103,10 +97,10 @@ static int openDeviceStream(const char * devname) {
         return 0;
     }
 
-    /* Wechselt in den NON-BLOCKING-MODE.
-     * Ein "read" wartet nun nicht mehr unendlich lange auf ein
-     * triggerndes Event, sondern liest das oberste Event auf dem
-     * Treiber-Stack.
+    /*
+     * Changes into a NON-BLOCKING-MODE.
+     * A "read" is now put onto the driver stack and doesn't wait
+     * for a triggered event.
      */
     fcntl(g_device.fd, F_SETFL, O_NONBLOCK);
 
@@ -114,48 +108,46 @@ static int openDeviceStream(const char * devname) {
 }
 
 /**
- * Ermittelt folgende Daten des Device
- * und speichert diese intern.
- * - Anzahl der Achsen (IOCTL Operation: JSIOCGAXES)
- * - Anzahl der Buttons (IOCTL Operation: JSIOCGBUTTONS)
- * - Name des Device (IOCTL Operation: JSIOCGNAME(length))
- * - Treiberversion (IOCTL Operation: JSIOCGVERSION)
+ * Determines the following device data and saves them internally:
+ * - Axis count (IOCTL operation: JSIOCGAXES)
+ * - Button count (IOCTL operation: JSIOCGBUTTONS)
+ * - Device name (IOCTL operation: JSIOCGNAME(length))
+ * - Driver version (IOCTL operation: JSIOCGVERSION)
  *
- * @return 0 = Fehler / 1 = alles OK.
+ * @return 0 on failure. Otherwise success.
  */
 static int getJoystickInformation() {
-    /* das Device muss geöffnet sein. */
+    /* the device must be opened ! */
     if (g_device.fd == -1) {
         fprintf(stderr, "getJoystickInformation: Device not opened!\n");
         return 0;
     }
 
-    /* Namen des Device auslesen und speichern. */
+    /* Read device name and save it */
     if (ioctl (g_device.fd, JSIOCGNAME(JOY_NAME_LENGTH), &g_device.name) < 0) {
         strncpy(g_device.name, "Unknown Device", sizeof(g_device.name));
     }
 
-    /* Anzahl der verfügbaren Achsen auslesen */
+    /* Read and save available Axis count */
     ioctl(g_device.fd, JSIOCGAXES, &g_device.axisNumber);
 
-    /* Anzahl der verfügbaren Buttons auslesen */
+    /* Read and save available Button count */
     ioctl(g_device.fd, JSIOCGBUTTONS, &g_device.buttonNumber);
 
-    /* Treiberversion auslesen */
+    /* Read and save driver version */
     ioctl(g_device.fd, JSIOCGVERSION, &g_device.driverVersion);
 
     return 1;
 }
 
 /**
- * Reserviert entsprechend Speicher für
- * die dynamischen Arrays der internen
- * Datenstruktur zur Verwaltung der Achsen/Button-Werte.
+ * Allocates memory for the dynamic arrays for the data structure to manage
+ * axes and buttons.
  *
- * @return 0 = Fehler / 1 = hat funktioniert
+ * @return 0 on failure. Otherwise success.
  */
 static int allocateDeviceValueMemory() {
-    /* dynamisches Array für die Achsenwerte */
+    /* dynamic array of axis values */
     g_device.axisValues = (short *)calloc(g_device.axisNumber, sizeof(short));
 
     if (g_device.axisValues == NULL) {
@@ -163,7 +155,7 @@ static int allocateDeviceValueMemory() {
         return 0;
     }
 
-    /* dynamisches Array für die Buttonwerte */
+    /* dynamic Array for button values */
     g_device.buttonValues = (short *)calloc(g_device.buttonNumber, sizeof(short));
 
     if (g_device.buttonValues == NULL) {
@@ -175,10 +167,9 @@ static int allocateDeviceValueMemory() {
 }
 
 /**
- * Startet eine Verbindung zum Device.
- * Reserviert Speicher für die interne Datenverwaltung.
+ * Starts a connection to the given device and allocates the correspondent memory.
  *
- * @return 0 = Fehler / 1 = hat funktioniert.
+ * @return 0 on failure. Otherwise success.
  */
 int startDeviceConnection(const char * devname) {
     if (!openDeviceStream(devname)) {
@@ -197,10 +188,9 @@ int startDeviceConnection(const char * devname) {
 }
 
 /**
- * Beendet die Verbindung zum Device.
- * Gibt reservierten Speicher wieder frei.
+ * Closes the connection to a device and frees memory.
  *
- * @return 0 = Fehler / 1 = hat funktioniert.
+ * @return 0 on failure. Otherwise success.
  */
 int endDeviceConnection() {
     close(g_device.fd);
@@ -208,7 +198,11 @@ int endDeviceConnection() {
 }
 
 /**
- * Gibt die ausgelesenen Joystickinformationen aus.
+ * Prints the following Joystick information to stdout:
+ * - Device name
+ * - Driver version
+ * - Axis count
+ * - Button count
  */
 void printJoystickInformation() {
     fprintf(stdout, "-------------------------------------\n");
@@ -220,15 +214,15 @@ void printJoystickInformation() {
 }
 
 /**
- * Verarbeitet ein Joystick-Event.
+ * Handles one Joystick event.
  *
- * e das Joystick-Event.
+ * @param e the Joystick event.
  */
 static void processEvent(struct js_event e) {
-    /* Event interpretieren
-     * die JS_EVENT_INIT Bits werden deaktiviert,
-     * da nicht zwischen synthetic und real events unterschieden
-     * werden soll.
+    /*
+     * Interprets event.
+     * The JS_EVENT_INIT bits will be deactivated as we do not want to distinguish
+     * between synthetic and real events.
      */
     switch (e.type & ~JS_EVENT_INIT) {
         case JS_EVENT_AXIS:
@@ -248,38 +242,38 @@ static void processEvent(struct js_event e) {
 }
 
 /**
- * Liest ein JoystickEvent aus und aktualisiert die Werte
- * entsprechend in der internen JoystickDatenstruktur.
+ * Reads a joystick event and updates the correspondent values
+ * accordingly.
  *
- * Struktur eines js_events:
+ * Strukture of js_events:
  *
- * time     :   unsigned int    - event Zeitstempel in ms
- * value    :   short           - der neue Wert
- * type     :   char            - die Art des Events
- * number   :   char            - die Nummer der Achse/des Buttons
+ * time     :   unsigned int    - event timestamp in ms
+ * value    :   short           - the new value
+ * type     :   char            - the type of the event
+ * number   :   char            - number of the relevant axis/button
  *
- * die möglichen Werte von type sind:
+ * possible values for 'type' are:
  *
- * JS_EVENT_BUTTON (0x01)       - ein Buttonevent
- * JS_EVENT_AXIS (0x02)         - ein Achsenevent
- * JS_EVENT_INIT (0x80)         - Initialstatus des Device
+ * JS_EVENT_BUTTON (0x01)       - a button event
+ * JS_EVENT_AXIS (0x02)         - an axis event
+ * JS_EVENT_INIT (0x80)         - Initial status of the device
  */
 void handleJoystickEvents() {
     struct js_event jsEvent;
 
-    /* all Events auf dem Treiber-Stack auslesen. */
+    /* read all events from the driver stack! */
     while (read(g_device.fd, &jsEvent, sizeof(struct js_event)) > 0) {
         processEvent(jsEvent);
     }
 }
 
 /**
- * Gibt den Wert einer Achse in einem Variablenparameter aus.
+ * Reads the value of an axis to 'value'.
  *
- * @param axisNumber die Achse, die ausgelesen werden soll
- * @param value der ausgelesene Wert
+ * @param axisNumber the relevant axis to be read.
+ * @param value the read value of the axis
  *
- * @return 0 = Fehler / 1 = hat funktioniert.
+ * @return 0 on failure. Otherwise success.
  */
 int getAxisValue(int axisNumber, short * value) {
     if (axisNumber <= g_device.axisNumber) {
@@ -287,19 +281,19 @@ int getAxisValue(int axisNumber, short * value) {
         return 1;
     }
 
-    fprintf(stderr, "getAxisValue: Ungueltige Achsenanhabe.\n");
+    fprintf(stderr, "getAxisValue: Invalid axis number\n");
     (*value) = 0;
     return 0;
 }
 
 
 /**
- * Gibt den Wert eines Button in einem Variablenparameter aus.
+ * Reads the value of a button to 'value'.
  *
- * @param buttonNumber der Button, der ausgelesen werden soll
- * @param value der ausgelesene Wert
+ * @param buttonNumber the relevant button to be read.
+ * @param value the read button value.
  *
- * @return 0 = Fehler / 1 = hat funktioniert.
+ * @return 0 on failure. Otherwise success.
  */
 int getButtonValue(int buttonNumber, short * value) {
     if (buttonNumber <= g_device.buttonNumber) {
@@ -307,13 +301,13 @@ int getButtonValue(int buttonNumber, short * value) {
         return 1;
     }
 
-    fprintf(stderr, "getButtonValue: Ungueltige Buttonanhabe.\n");
+    fprintf(stderr, "getButtonValue: Invalid button number\n");
     (*value) = 0;
     return 0;
 }
 
 /*
- * MODUL-TEST
+ * MODULE TEST
 int main(void) {
 
     short testvalue = 2000;

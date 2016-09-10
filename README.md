@@ -44,6 +44,16 @@ Name | Default Value | Description
 `MT_XBOX_TRANS_NORMALISATION` | 500000.0 | The smaller this value, the faster the translation will get. So moving up/down/left/right/front/back are affected.
 `MT_XBOX_TURN_NORMALISATION`  | 2000.0   | The smaller this value, the faster Pitch and Yaw will be. Left stick is affected.
 
+The following constants will affect the axis and give them an offset (if value > 0).
+The offset could be used, to for example ignore the negative axis values.
+
+Name | Default Value | Assignment
+ --- | ---
+`MT_AXIS_2_OFFSET` | 32768 | LT Axis
+`MT_AXIS_3_OFFSET` | 0 | Left stick
+`MT_AXIS_4_OFFSET` | 0 | Right stick
+`MT_AXIS_5_OFFSET` | 32768 | RT Axis
+
 # What about the Buttons?
 
 You might have noticed that we ignored any buttons from your Controller and the `mtXboxController` does in fact not give you any interface

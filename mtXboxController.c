@@ -111,20 +111,20 @@ void mtCalcJoyMovement (double interval)
 
     G_JoyViewVector = mtRotatePointWithQuaternion(q, G_JoyViewVector);
 
-    double forwardTranslation = -getTranslationAxisValue(4) / MT_XBOX_TRANS_NORMALISATION;
+    double forwardTranslation = -(getTranslationAxisValue(4) + MT_AXIS_4_OFFSET) / MT_XBOX_TRANS_NORMALISATION;
     MTVec3D forwardVec = mtNormVector3D(mtToVector3D(G_JoyViewVector.x, 0, G_JoyViewVector.z));
     G_JoyTranslation = mtAddVectorVector(G_JoyTranslation, mtMultiplyVectorScalar(forwardVec, forwardTranslation));
 
-    double sideTranslation = getTranslationAxisValue(3) / MT_XBOX_TRANS_NORMALISATION;
+    double sideTranslation = (getTranslationAxisValue(3) + MT_AXIS_3_OFFSET) / MT_XBOX_TRANS_NORMALISATION;
     MTVec3D sideVec = mtNormVector3D(mtToVector3D(sideDirection.x, 0, sideDirection.z));
     G_JoyTranslation = mtAddVectorVector(G_JoyTranslation, mtMultiplyVectorScalar(sideVec, sideTranslation));
 
     MTVec3D upDirection = mtToVector3D(0, 1, 0);
-    double upTranslation = (getTranslationAxisValue(2) + 32768) / MT_XBOX_TRANS_NORMALISATION;
+    double upTranslation = (getTranslationAxisValue(2) + MT_AXIS_2_OFFSET) / MT_XBOX_TRANS_NORMALISATION;
     G_JoyTranslation = mtAddVectorVector(G_JoyTranslation, mtMultiplyVectorScalar(upDirection, upTranslation));
 
     MTVec3D downDirection = mtToVector3D(0, -1, 0);
-    double downTranslation = (getTranslationAxisValue(5) + 32768) / MT_XBOX_TRANS_NORMALISATION;
+    double downTranslation = (getTranslationAxisValue(5) + MT_AXIS_5_OFFSET) / MT_XBOX_TRANS_NORMALISATION;
     G_JoyTranslation = mtAddVectorVector(G_JoyTranslation, mtMultiplyVectorScalar(downDirection, downTranslation));
 
     G_JoyPosition = G_JoyTranslation;
@@ -139,11 +139,11 @@ void mtCalcJoyMovement (double interval)
 int mtInitJoyControl (char* name)
 {
     G_JoyUpVector = mtToVector3D(0, 1, 0);
-    G_JoyViewVector = mtToVector3D(-MT_CAMERA_X, -MT_CAMERA_Y, -MT_CAMERA_Z);
+    G_JoyViewVector = mtToVector3D(-MT_START_POS_X, -MT_START_POS_Y, -MT_START_POS_Z);
     G_JoyViewVector = mtNormVector3D(G_JoyViewVector);
 
     G_JoyTranslation = mtToVector3D(0,0,0);
-    G_JoyPosition = mtToVector3D(MT_CAMERA_X, MT_CAMERA_Y, MT_CAMERA_Z);
+    G_JoyPosition = mtToVector3D(MT_START_POS_X, MT_START_POS_Y, MT_START_POS_Z);
 
     if  (!startDeviceConnection(name)) {
         printf("ERROR: joystick could not be initialized.\n");
