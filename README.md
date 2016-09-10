@@ -48,7 +48,7 @@ The following constants will affect the axis and give them an offset (if value >
 The offset could be used, to for example ignore the negative axis values.
 
 Name | Default Value | Assignment
- --- | ---
+ --- | --- | ---
 `MT_AXIS_2_OFFSET` | 32768 | LT Axis
 `MT_AXIS_3_OFFSET` | 0 | Left stick
 `MT_AXIS_4_OFFSET` | 0 | Right stick
