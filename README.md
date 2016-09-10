@@ -41,7 +41,7 @@ Changes might be necessary depending on your application and size of your virtua
 
 Name | Default Value | Description
  --- | --- | ---
-`MT_XBOX_TRANS_NORMALISATION` | 500000.0 | The smaller this value, the faster the translation will get. Affected are: Right stick, LT Axis and RT Axis (See: [Controller assignment](#controller-assignment))
+`MT_XBOX_TRANS_NORMALISATION` | 500000.0 | The smaller this value, the faster the translation will get. Affected are: Right stick, LT Axis and RT Axis (See: [Controller Assignment](#controller-assignment))
 `MT_XBOX_TURN_NORMALISATION`  | 2000.0   | The smaller this value, the faster Pitch and Yaw will be. Left stick is affected.
 
 The following constants will affect the axis and give them an offset (if value > 0).
@@ -101,7 +101,7 @@ gluLookAt (cam.x,    cam.y,    cam.z,
 mtFinishJoyControl();
 ```
 
-[Controller Assignment](#controller-assignment)
+# Controller Assignment
 
 All code is tested with the XBox One controller (see following image).
 
