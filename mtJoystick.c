@@ -1,5 +1,5 @@
 /*
- * mtJoystick.h
+ * mtJoystick.c
  *
  * Implements Joystick control for Linux newer than 2.2.x.
  * This implementation can handle a maxium of:
